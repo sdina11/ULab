@@ -33,38 +33,38 @@ const ValueStreamCard: React.FC<Props> = ({ data, onViewDetails }) => {
   const chartColor = getChartColor(status);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col h-full hover:shadow-md transition-all group">
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="text-base font-black text-slate-800 group-hover:text-indigo-600 transition-colors">{data.name}</h3>
-          <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-wider mt-0.5">{data.outcome}</p>
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col h-full hover:shadow-lg hover:border-indigo-200 transition-all group relative overflow-hidden">
+      <div className="flex justify-between items-start mb-4 relative z-10">
+        <div className="overflow-hidden">
+          <h3 className="text-sm font-black text-slate-800 truncate leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight" title={data.name}>{data.name}</h3>
+          <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest mt-1.5 truncate">{data.outcome}</p>
         </div>
-        <div className="flex flex-col items-end">
-           <div className={`text-xl font-black ${currentHealth >= 85 ? 'text-emerald-500' : currentHealth >= 70 ? 'text-amber-500' : 'text-rose-500'}`}>
+        <div className="flex flex-col items-end shrink-0 ml-4">
+           <div className={`text-xl font-black leading-none tracking-tighter ${currentHealth >= 85 ? 'text-emerald-500' : currentHealth >= 70 ? 'text-amber-500' : 'text-rose-500'}`}>
             {currentHealth}%
           </div>
-          <div className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Health Index</div>
+          <span className="text-[8px] font-black text-slate-400 uppercase mt-1">Health</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex -space-x-2">
-          {data.contributingTowers.map((t, i) => (
-            <div key={i} className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] font-bold text-slate-500 shadow-sm" title={t}>
+      <div className="flex items-center gap-3 mb-4 relative z-10">
+        <div className="flex -space-x-1.5 shrink-0">
+          {data.contributingTowers.slice(0, 4).map((t, i) => (
+            <div key={i} className="w-5 h-5 rounded-full bg-slate-50 border border-white flex items-center justify-center text-[8px] font-black text-slate-400 shadow-sm" title={t}>
               {t.substring(0, 1)}
             </div>
           ))}
         </div>
-        <div className="h-4 w-[1px] bg-slate-200 mx-1"></div>
+        <div className="h-3 w-px bg-slate-100"></div>
         <div className="flex items-center gap-1.5">
-          <i className="fas fa-bolt text-indigo-400 text-[10px]"></i>
-          <span className="text-[10px] font-bold text-slate-500">{data.automationLevel}% Automation</span>
+           <i className="fas fa-bolt text-indigo-400 text-[9px]"></i>
+           <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">{data.automationLevel}% Automation</span>
         </div>
       </div>
 
-      <div className="w-full h-[140px]">
+      <div className="w-full h-[80px] mb-4">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data.trend}>
+          <AreaChart data={data.trend} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id={`grad-${data.id}`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={chartColor} stopOpacity={0.15}/>
@@ -75,39 +75,35 @@ const ValueStreamCard: React.FC<Props> = ({ data, onViewDetails }) => {
             <XAxis dataKey="timestamp" hide />
             <YAxis domain={[0, 100]} hide />
             <Tooltip 
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: '10px' }}
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '10px', padding: '8px' }}
             />
             <Area 
               type="monotone" 
               dataKey="healthScore" 
               stroke={chartColor} 
-              strokeWidth={2.5}
+              strokeWidth={2}
               fill={`url(#grad-${data.id})`}
               isAnimationActive={false}
             />
             {anomalies.map((p, i) => (
-               <ReferenceDot key={i} x={p.timestamp} y={p.healthScore} r={4} fill="#f43f5e" stroke="#fff" strokeWidth={2} />
+               <ReferenceDot key={i} x={p.timestamp} y={p.healthScore} r={3} fill="#f43f5e" stroke="#fff" strokeWidth={1.5} />
             ))}
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-slate-50 pt-4">
-        <div className="flex items-center gap-1.5">
-          {anomalies.length > 0 ? (
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
-              <span className="text-[10px] font-black text-rose-500 uppercase tracking-tighter">{anomalies.length} Stream Interruptions</span>
-            </div>
-          ) : (
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Optimized Stream</span>
-          )}
+      <div className="mt-auto flex items-center justify-between border-t border-slate-50 pt-3 relative z-10">
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${anomalies.length > 0 ? 'bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.4)]' : 'bg-emerald-500'}`}></div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            {anomalies.length > 0 ? `${anomalies.length} Signals` : 'Optimized'}
+          </span>
         </div>
         <button 
           onClick={() => onViewDetails(data)}
-          className="text-[10px] font-black text-indigo-600 hover:text-indigo-800 uppercase tracking-[0.1em]"
+          className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase tracking-[0.2em] transition-colors"
         >
-          View Diagnostics
+          View Insight
         </button>
       </div>
     </div>
