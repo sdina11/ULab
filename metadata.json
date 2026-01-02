@@ -1,0 +1,5 @@
+{
+  "name": "Integrated IT Operating Model Dashboard",
+  "description": "An executive-grade operational control plane dashboard visualizing IT service tower health, trends, and anomalies across the enterprise.",
+  "requestFramePermissions": []
+}
